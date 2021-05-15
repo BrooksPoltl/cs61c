@@ -154,8 +154,30 @@ int is_commit_msg_ok(const char *msg)
 void next_commit_id(char *commit_id)
 {
   /* COMPLETE THE REST */
-  char lastChar = commit_id[(strlen(commit_id) - 1)];
-  if (lastChar == '0')
+  char lastChar;
+  int lastCharIndex;
+  int i;
+  for (i = 0; i < strlen(commit_id); i = i + 1)
+  {
+
+    if (commit_id[i] == '0' && !lastChar)
+    {
+      printf("%c\n", commit_id[i - 1]);
+      if (i == 0)
+      {
+        lastChar = commit_id[i];
+        lastCharIndex = i;
+      }
+      else
+      {
+        lastChar = commit_id[i - 1];
+        lastCharIndex = i;
+      }
+    }
+  }
+  printf("%s\n", commit_id);
+  printf("%c\n", lastChar);
+  if (lastChar == 0)
     commit_id[0] = '6';
   else
   {
@@ -163,11 +185,11 @@ void next_commit_id(char *commit_id)
     strcpy(new_commit_id, commit_id);
     // probably should iterate but its 3 vals
     if (lastChar == '6')
-      new_commit_id[(strlen(commit_id) - 1)] = '1';
+      new_commit_id[(lastCharIndex - 1)] = '1';
     if (lastChar == '1')
-      new_commit_id[(strlen(commit_id) - 1)] = 'c';
+      new_commit_id[(lastCharIndex - 1)] = 'c';
     if (lastChar == 'c')
-      new_commit_id[(strlen(commit_id))] = '6';
+      new_commit_id[lastCharIndex] = '6';
     strcpy(commit_id, new_commit_id);
   }
 }
@@ -183,9 +205,44 @@ int beargit_commit(const char *msg)
   char commit_id[COMMIT_ID_SIZE];
   read_string_from_file(".beargit/.prev", commit_id, COMMIT_ID_SIZE);
   next_commit_id(commit_id);
-  printf("%s", commit_id);
-  /* COMPLETE THE REST */
-  fs_mkdir(commit_id);
+
+  char commit_id_path[COMMIT_ID_SIZE + 10];
+  strcpy(commit_id_path, ".beargit/");
+  strcat(commit_id_path, commit_id);
+  printf("%s", commit_id_path);
+  fs_mkdir(commit_id_path);
+  // copy index and prev into commit path
+  char copy_path[COMMIT_ID_SIZE + FILENAME_SIZE];
+  strcpy(copy_path, commit_id_path);
+  strcat(copy_path, "/.index");
+  fs_cp(".beargit/.index", copy_path);
+  strcpy(copy_path, commit_id_path);
+  strcat(copy_path, "/.prev");
+  fs_cp(".beargit/.prev", copy_path);
+
+  FILE *fp;
+  char buff[FILENAME_SIZE];
+  fp = fopen("./.beargit/.index", "r");
+
+  while (fscanf(fp, "%s", buff) == 1)
+  {
+    strcpy(copy_path, commit_id_path);
+    strcat(copy_path, "/");
+    strcat(copy_path, buff);
+    char from_path[FILENAME_SIZE + 3];
+    strcpy(from_path, "./");
+    strcat(from_path, buff);
+
+    fs_cp(from_path, copy_path);
+  }
+  char msg_path[COMMIT_ID_SIZE + FILENAME_SIZE];
+  strcpy(msg_path, commit_id_path);
+  strcat(msg_path, "/.msg");
+  FILE *findex = fopen(msg_path, "w");
+  fclose(findex);
+  write_string_to_file(msg_path, msg);
+
+  write_string_to_file("./.beargit/.prev", commit_id);
   return 0;
 }
 
