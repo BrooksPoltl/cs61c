@@ -280,7 +280,11 @@ int beargit_log()
   char commit_id_path[COMMIT_ID_SIZE + 20];
   char commit_id_file_path[COMMIT_ID_SIZE + 30];
   read_string_from_file("./.beargit/.prev", commit_id, COMMIT_ID_SIZE);
-
+  if (commit_id[0] == '0')
+  {
+    fprintf(stderr, "ERROR: There are no commits!\n");
+    return 1;
+  }
   strcpy(commit_id_path, "./.beargit/");
   strcat(commit_id_path, commit_id);
 
@@ -289,6 +293,7 @@ int beargit_log()
   strcat(commit_id_file_path, ".msg");
 
   read_string_from_file(commit_id_file_path, msg, MSG_SIZE);
+
   while (commit_id[0] != '0')
   {
     printf("\n");
