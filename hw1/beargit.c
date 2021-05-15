@@ -162,7 +162,6 @@ void next_commit_id(char *commit_id)
 
     if (commit_id[i] == '0' && !lastChar)
     {
-      printf("%c\n", commit_id[i - 1]);
       if (i == 0)
       {
         lastChar = commit_id[i];
@@ -175,9 +174,7 @@ void next_commit_id(char *commit_id)
       }
     }
   }
-  printf("%s\n", commit_id);
-  printf("%c\n", lastChar);
-  if (lastChar == 0)
+  if (lastChar == '0')
     commit_id[0] = '6';
   else
   {
@@ -278,6 +275,39 @@ int beargit_status()
 int beargit_log()
 {
   /* COMPLETE THE REST */
+  char msg[MSG_SIZE];
+  char commit_id[COMMIT_ID_SIZE];
+  char commit_id_path[COMMIT_ID_SIZE + 20];
+  char commit_id_file_path[COMMIT_ID_SIZE + 30];
+  read_string_from_file("./.beargit/.prev", commit_id, COMMIT_ID_SIZE);
 
+  strcpy(commit_id_path, "./.beargit/");
+  strcat(commit_id_path, commit_id);
+
+  strcpy(commit_id_file_path, commit_id_path);
+  strcat(commit_id_file_path, "/");
+  strcat(commit_id_file_path, ".msg");
+
+  read_string_from_file(commit_id_file_path, msg, MSG_SIZE);
+  while (commit_id[0] != '0')
+  {
+    printf("\n");
+    printf("commit %s\n", commit_id);
+    printf("%s\n", msg);
+    strcpy(commit_id_file_path, commit_id_path);
+    strcat(commit_id_file_path, "/");
+    strcat(commit_id_file_path, ".prev");
+    read_string_from_file(commit_id_file_path, commit_id, COMMIT_ID_SIZE);
+    if (commit_id[0] != '0')
+    {
+      strcpy(commit_id_path, "./.beargit/");
+      strcat(commit_id_path, commit_id);
+
+      strcpy(commit_id_file_path, commit_id_path);
+      strcat(commit_id_file_path, "/");
+      strcat(commit_id_file_path, ".msg");
+      read_string_from_file(commit_id_file_path, msg, MSG_SIZE);
+    }
+  }
   return 0;
 }
