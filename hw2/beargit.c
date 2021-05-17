@@ -155,7 +155,7 @@ int is_commit_msg_ok(const char *msg)
   }
 }
 
-void next_commit_id(char *commit_id)
+void next_commit_id_hw1(char *commit_id)
 {
   /* COMPLETE THE REST */
   char lastChar;
@@ -195,7 +195,7 @@ void next_commit_id(char *commit_id)
   }
 }
 
-int beargit_commit(const char *msg)
+int beargit_commit_hw1(const char *msg)
 {
   if (!is_commit_msg_ok(msg))
   {
