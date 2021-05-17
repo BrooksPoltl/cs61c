@@ -158,41 +158,32 @@ int is_commit_msg_ok(const char *msg)
 void next_commit_id_hw1(char *commit_id)
 {
   /* COMPLETE THE REST */
-  char lastChar;
-  int lastCharIndex;
+  char new_commit_id[COMMIT_ID_SIZE];
+  int lastCharIndex = 0;
   int i;
   for (i = 0; i < strlen(commit_id); i = i + 1)
   {
 
-    if (commit_id[i] == '0' && !lastChar)
+    if (commit_id[i] == '1' || commit_id[i] == 'c')
     {
-      if (i == 0)
-      {
-        lastChar = commit_id[i];
-        lastCharIndex = i;
-      }
-      else
-      {
-        lastChar = commit_id[i - 1];
-        lastCharIndex = i;
-      }
+      lastCharIndex = i;
+    }
+    if (commit_id[i] == '0')
+    {
+      commit_id[i] = '6';
     }
   }
-  if (lastChar == '0')
-    commit_id[0] = '6';
+  strcpy(new_commit_id, commit_id);
+  // probably should iterate but its 3 vals
+  if (commit_id[lastCharIndex] == '1')
+    new_commit_id[(lastCharIndex)] = 'c';
+  else if (commit_id[lastCharIndex] == 'c')
+    new_commit_id[lastCharIndex + 1] = '1';
   else
   {
-    char new_commit_id[COMMIT_ID_SIZE];
-    strcpy(new_commit_id, commit_id);
-    // probably should iterate but its 3 vals
-    if (lastChar == '6')
-      new_commit_id[(lastCharIndex - 1)] = '1';
-    if (lastChar == '1')
-      new_commit_id[(lastCharIndex - 1)] = 'c';
-    if (lastChar == 'c')
-      new_commit_id[lastCharIndex] = '6';
-    strcpy(commit_id, new_commit_id);
+    new_commit_id[lastCharIndex] = '1';
   }
+  strcpy(commit_id, new_commit_id);
 }
 
 int beargit_commit_hw1(const char *msg)
