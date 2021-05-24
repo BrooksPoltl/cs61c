@@ -479,17 +479,18 @@ int beargit_checkout(const char *arg, int new_branch)
 
   // Just a better name, since we now know the argument is a branch name.
   const char *branch_name = arg;
+  printf("%s", arg);
 
   // Read branches file (giving us the HEAD commit id for that branch).
   int branch_exists = (get_branch_number(branch_name) >= 0);
 
   // Check for errors.
-  if (!(!branch_exists || !new_branch))
+  if (branch_exists && new_branch)
   {
     fprintf(stderr, "ERROR: A branch named %s already exists\n", branch_name);
     return 1;
   }
-  else if (!branch_exists && new_branch)
+  else if (!branch_exists && !new_branch)
   {
     fprintf(stderr, "ERROR: No branch %s exists\n", branch_name);
     return 1;
