@@ -479,11 +479,9 @@ int beargit_checkout(const char *arg, int new_branch)
 
   // Just a better name, since we now know the argument is a branch name.
   const char *branch_name = arg;
-  printf("%s", arg);
 
   // Read branches file (giving us the HEAD commit id for that branch).
   int branch_exists = (get_branch_number(branch_name) >= 0);
-
   // Check for errors.
   if (branch_exists && new_branch)
   {
@@ -496,13 +494,11 @@ int beargit_checkout(const char *arg, int new_branch)
     return 1;
   }
 
-  // File for the branch we are changing into.
-  printf("%s", branch_name);
-  char *branch_file = ".beargit/.branch_";
+  // // File for the branch we are changing into.
+  char branch_file[18 + BRANCHNAME_SIZE] = ".beargit/.branch_";
   strcat(branch_file, branch_name);
-
-  // Update the branch file if new branch is created (now it can't go wrong anymore)
-  if (!new_branch)
+  // // Update the branch file if new branch is created (now it can't go wrong anymore)
+  if (new_branch)
   {
     FILE *fbranches = fopen(".beargit/.branches", "a");
     fprintf(fbranches, "%s\n", branch_name);
@@ -512,7 +508,7 @@ int beargit_checkout(const char *arg, int new_branch)
 
   write_string_to_file(".beargit/.current_branch", branch_name);
 
-  // Read the head commit ID of this branch.
+  // // Read the head commit ID of this branch.
   char branch_head_commit_id[COMMIT_ID_SIZE];
   read_string_from_file(branch_file, branch_head_commit_id, COMMIT_ID_SIZE);
 
