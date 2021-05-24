@@ -420,6 +420,10 @@ int beargit_branch()
 int checkout_commit(const char *commit_id)
 {
   /* COMPLETE THE REST */
+  char commit_index_file[17 + COMMIT_ID_SIZE] = ".beargit/";
+  strcat(commit_index_file, commit_id);
+  strcat(commit_index_file, "/.index");
+  fs_cp(commit_index_file, ".beargit/.index");
   return 0;
 }
 
